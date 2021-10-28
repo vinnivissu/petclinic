@@ -4,13 +4,13 @@ pipeline {
 		maven 'M3.6'
 	}
 	stages {
-		stage('Sonar Scanner') {
-			steps {
-				withSonarQubeEnv('Sonar') {
-    					sh "mvn sonar:sonar"
-				}
-			}
-		}
+		//stage('Sonar Scanner') {
+		//	steps {
+		//		withSonarQubeEnv('Sonar') {
+    		//			sh "mvn sonar:sonar"
+		//		}
+		//	}
+		//}
 		stage('Build') {
 			steps {
 				sh "mvn clean package"
@@ -26,6 +26,11 @@ pipeline {
 				stage('Unit Tests') {
 					steps { 
 						junit 'target/surefire-reports/*.xml'
+					}
+				}
+				stage('Nexus Uploader') {
+					steps { 
+						nexusArtifactUploader artifacts: [[artifactId: 'spring-petclinic', classifier: '', file: 'target/petclinic.war', type: 'war']], credentialsId: 'nexusCred', groupId: 'org.springframework.samples', nexusUrl: '3.128.203.147:8081/nexus', nexusVersion: 'nexus2', protocol: 'http', repository: 'snapshots', version: '4.2.6-SNAPSHOT'
 					}
 				}
 			}
