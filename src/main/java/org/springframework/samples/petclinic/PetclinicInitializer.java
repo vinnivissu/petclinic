@@ -40,6 +40,7 @@ import java.util.EnumSet;
  * <p/>
  *
  * @author Antoine Rey
+ * testing my webhook
  */
 public class PetclinicInitializer extends AbstractDispatcherServletInitializer {
 
