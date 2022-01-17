@@ -22,6 +22,18 @@ steps:
     effectivePomSkip: false
     sonarQubeRunAnalysis: false
 
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'sonarToken'
+    organization: 'anilrishi'
+    scannerMode: 'Other'
+
+- task: SonarCloudAnalyze@1
+
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '30'
+
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(system.defaultworkingdirectory)'
