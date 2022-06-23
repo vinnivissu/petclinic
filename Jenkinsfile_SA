@@ -47,7 +47,7 @@ pipeline {
             steps {
                 sh '''
                     echo "ansi123" > .mypass
-                    ansible-playbook -i production site.yml --vault-password-file .mypass
+                    ansible-playbook site.yml -e "BUILD_NO=${env.BUILD_NUMBER}" -i production --vault-password-file .mypass
                 '''
             }
         }
