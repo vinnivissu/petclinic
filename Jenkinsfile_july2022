@@ -1,0 +1,65 @@
+pipeline {
+
+    agent any
+    
+    tools {
+        maven 'M3.8'
+    }
+    
+    environment {
+        goal='package'
+    }
+
+    stages {
+    
+        stage('Checkout') {
+            steps {
+                git branch: 'master', url: 'https://github.com/devopskphb/petclinic.git'
+            }
+        }
+    
+        stage('Build') {
+            steps {
+                sh "mvn clean ${goal}"
+            }
+        }
+        
+        stage('Post Build Actions') {
+            parallel {
+                stage('Archive Artifacts') {
+                    steps {
+                        archiveArtifacts artifacts: 'target/*.?ar', followSymlinks: false
+                    }
+                }
+            
+                stage('Junit Reports') {
+                    steps {
+                        junit 'target/surefire-reports/*.xml'
+                    }
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            notify('Success', 'good')
+        }
+        failure {
+            notify('Failed', 'bad')
+        }
+    }
+}
+
+def notify(status, ccode) {
+    emailext (
+        to: 'devops.kphb@gmail.com',
+        subject: "${status}: Job ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+        body: """
+            <p>${status}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' </p>
+            <p>Check console output at <a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a></p>
+        """ 
+    )
+    
+    slackSend color: "${ccode}", message: "${status}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+}
