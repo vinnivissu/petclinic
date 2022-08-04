@@ -6,14 +6,12 @@ pipeline {
         maven 'M3.8'
     }
     
-    environment {
-        goal='package'
-    }
+    parameters { choice(name: 'GOAL', choices: ['compile', 'test', 'package'], description: 'choose a maven goal') }
 
     stages {  
         stage('Build') {
             steps {
-                sh "mvn clean ${goal}"
+                sh "mvn clean ${GOAL}"
             }
         }
         
