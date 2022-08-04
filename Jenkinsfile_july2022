@@ -10,14 +10,7 @@ pipeline {
         goal='package'
     }
 
-    stages {
-    
-        stage('Checkout') {
-            steps {
-                git branch: 'master', url: 'https://github.com/devopskphb/petclinic.git'
-            }
-        }
-    
+    stages {  
         stage('Build') {
             steps {
                 sh "mvn clean ${goal}"
